@@ -39,6 +39,9 @@ the summary to asafl@rh.co.il via Gmail.
 - [x] Client-side search (Issue #5)
 - [x] Bulk download with --since, --skip-existing, --format
 - [x] UUID validation, location data, duration formatting
+- [x] A11y tree snapshot tool (tools/snapshot-a11y.js) with PII sanitization
+- [x] .gitignore hardened for secrets (.env, auth.json, *.pem, *.key)
+- [x] Browser automation via CDP + a11y tree (cheap alternative to screenshots)
 
 ## Phase 2 - Automation Pipeline
 - [ ] Gemini integration (transcription + summarization)

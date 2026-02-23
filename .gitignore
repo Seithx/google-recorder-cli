@@ -8,6 +8,15 @@ node_modules/
 # Chrome profile (contains session data)
 chrome-profile/
 
+# Secrets & credentials - NEVER commit
+.env
+.env.*
+auth.json
+*.pem
+*.key
+credentials.json
+secrets/
+
 # OS files
 Thumbs.db
 Desktop.ini
