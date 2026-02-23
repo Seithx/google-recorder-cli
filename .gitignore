@@ -5,6 +5,9 @@ node_modules/
 *.txt
 !README.md
 
+# A11y snapshots (may contain PII)
+tools/snapshots/
+
 # Chrome profile (contains session data)
 chrome-profile/
 
@@ -29,5 +32,5 @@ Desktop.ini
 # Claude Code local settings
 .claude/settings.local.json
 
-# Reference repo (for analysis only)
-ref/
+# Reference repo (dylantmoore/google-recorder-cli, for analysis only)
+ref-dylantmoore-recorder-cli/

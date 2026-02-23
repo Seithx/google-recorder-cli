@@ -40,7 +40,7 @@ MSYS_NO_PATHCONV=1 claude mcp add chrome-devtools -s user -- cmd /c npx chrome-d
 | 2 | Google blocks sign-in on automated browsers | Sign in manually BEFORE connecting MCP |
 | 3 | `--browser-url` silently fails, MCP spawns own Chrome | Bypass MCP, use puppeteer-core directly |
 | 4 | wsEndpoint changes each Chrome restart (stale ID = 404) | Prefer `--browserUrl` (auto-discovers WS). This is the #1 cause of 404 errors |
-| 5 | MCP returns 404 with `--browserUrl` too | Fall back to puppeteer-core; `lib/auth.js` `launchChrome()` handles launch |
+| 5 | MCP returns 404 with `--browserUrl` too | Fall back to puppeteer-core; `src/auth.js` `launchChrome()` handles launch |
 | 6 | Fresh `--user-data-dir` opens `chrome://intro/` not target URL | Navigate via CDP after launch: `pages[0].goto(url)` |
 
 General GitBash pitfalls (`!` escaping, stdout swallowing, path mangling, `cmd /c npx`) are in `~/.claude/CLAUDE.md` and project `CLAUDE.md`.

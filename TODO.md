@@ -42,6 +42,8 @@ the summary to asafl@rh.co.il via Gmail.
 - [x] A11y tree snapshot tool (tools/snapshot-a11y.js) with PII sanitization
 - [x] .gitignore hardened for secrets (.env, auth.json, *.pem, *.key)
 - [x] Browser automation via CDP + a11y tree (cheap alternative to screenshots)
+- [x] Codebase cleanup: deleted 9 exploration/POC scripts, retained knowledge in CLAUDE.md
+- [x] Renamed lib/ -> src/, ref/ -> ref-dylantmoore-recorder-cli/, updated all references
 
 ## Phase 2 - Automation Pipeline
 - [ ] Gemini integration (transcription + summarization)

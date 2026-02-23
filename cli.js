@@ -6,7 +6,7 @@
 const { Command } = require('commander');
 const fs = require('fs');
 const path = require('path');
-const { getAuth, checkAuth, clearAuthFile } = require('./lib/auth');
+const { getAuth, checkAuth, clearAuthFile } = require('./src/auth');
 const {
   listRecordings,
   listAllRecordings,
@@ -15,7 +15,7 @@ const {
   downloadAudio,
   isValidUUID,
   formatDuration,
-} = require('./lib/api');
+} = require('./src/api');
 
 const program = new Command();
 
@@ -483,7 +483,7 @@ program
   .command('config')
   .description('Show current configuration')
   .action(async () => {
-    const { AUTH_FILE, PROFILE_DIR, CONFIG_DIR } = require('./lib/auth');
+    const { AUTH_FILE, PROFILE_DIR, CONFIG_DIR } = require('./src/auth');
     console.log('Recorder CLI Configuration');
     console.log('=========================\n');
     console.log(`Auth file:      ${AUTH_FILE}`);

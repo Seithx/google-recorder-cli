@@ -215,10 +215,10 @@ Auth: `SAPISIDHASH` header (SHA1 of timestamp + SAPISID cookie + origin) + Googl
 
 ```
 cli.js                 CLI entry point (commander.js)
-lib/
+src/
   auth.js              Auth management (Chrome, cookies, SAPISIDHASH, file persistence)
   api.js               Recorder API client (gRPC-Web + audio download)
-test-auth-flow.js      Integration test
+tools/                 Dev utilities (a11y snapshots, etc.)
 ```
 
 ## Troubleshooting
