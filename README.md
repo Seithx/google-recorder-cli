@@ -195,21 +195,52 @@ Thanks for having me...
 
 ## API Endpoints
 
-All gRPC-Web calls go to `pixelrecorder-pa.clients6.google.com`:
+Protocol: gRPC-Web over HTTPS POST | `Content-Type: application/json+protobuf` | Auth: `SAPISIDHASH` header + Google API key
 
-| Method | Body | Returns |
-|--------|------|---------|
-| `GetRecordingList` | `[[timestamp_s, ns], pageSize]` | Array of recording metadata |
-| `GetRecordingInfo` | `[shareId]` | Single recording metadata |
-| `GetTranscription` | `[shareId]` | Word-level transcript with timestamps |
-| `GetAudioTag` | `[shareId]` | Speech/music/silence segments |
-| `GetWaveform` | `[shareId]` | Waveform amplitude data |
-| `ListLabels` | `[]` | User labels |
-| `GetShareList` | `[shareId]` | Share permissions |
+**Important**: Read methods use the web share UUID (`shareId`). Write/mutate methods use the device internal ID (`internalId`). Both are returned by `GetRecordingInfo`.
 
-Audio downloads: `GET https://usercontent.recorder.google.com/download/playback/{id}?authuser={N}&download=true`
+### PlaybackService (16 methods)
 
-Auth: `SAPISIDHASH` header (SHA1 of timestamp + SAPISID cookie + origin) + Google API key.
+Host: `pixelrecorder-pa.clients6.google.com`
+
+| Method | Body | Returns | Status |
+|--------|------|---------|--------|
+| `GetRecordingList` | `[[timestamp_s, ns], pageSize]` | Array of recording metadata | Implemented |
+| `GetRecordingInfo` | `[shareId]` | Single recording metadata | Implemented |
+| `GetTranscription` | `[shareId]` | Word-level transcript with timestamps | Implemented |
+| `GetAudioTag` | `[shareId]` | Speech/music/silence segments | Implemented |
+| `GetWaveform` | `[shareId]` | Waveform amplitude data | Implemented |
+| `ListLabels` | `[]` | User labels | Implemented |
+| `GetShareList` | `[shareId]` | Share permissions | Implemented |
+| `GetGlobalSearchReadiness` | `[]` | Search index status | Implemented |
+| `Search` | `[query, null, shareId, null, limit]` | Recording matches (paginated) | Not yet |
+| `SingleRecordingSearch` | `[query, shareId]` | Matches within one recording | Not yet |
+| `UpdateRecordingLabels` | `[shareId, [["label", action]]]` | - | Not yet |
+| `DeleteRecordingList` | `[[internalId]]` | `[1]` | Not yet |
+| `ChangeShareState` | `[internalId, state]` | `[state, shareId]` | Not yet |
+| `UpdateRecordingTitle` | *(in source, not triggered)* | - | Not yet |
+| `WriteShareList` | *(in source)* | - | Not yet |
+| `BlockPerson` | *(in source)* | - | Not yet |
+
+### EditingService (9 methods)
+
+Session-based: `OpenSession` -> edits -> `SaveAudio` (creates copy) or `CloseSession` (discard)
+
+| Method | Body | Returns | Status |
+|--------|------|---------|--------|
+| `OpenSession` | `[shareId]` | `[sessionId]` | Not yet |
+| `CropAudio` | `[sessionId, [[start_ns], [end_sec]]]` | Updated metadata | Not yet |
+| `RemoveAudio` | `[sessionId, [[start_ns, end_ns], [end_sec]]]` | Updated metadata | Not yet |
+| `UndoEdit` | `[sessionId]` | Updated metadata | Not yet |
+| `SaveAudio` | `[sessionId, "title"]` | `[newRecordingId, 1]` | Not yet |
+| `CloseSession` | `[sessionId]` | `[]` | Not yet |
+| `SplitTranscription` | *(in source)* | - | Not yet |
+| `RenameSpeaker` | *(in source)* | - | Not yet |
+| `SwitchSpeaker` | *(in source)* | - | Not yet |
+
+### Audio Download
+
+`GET https://usercontent.recorder.google.com/download/playback/{id}?authuser={N}&download=true` (m4a, supports range requests)
 
 ## Project Structure
 

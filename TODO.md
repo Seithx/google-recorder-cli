@@ -75,6 +75,14 @@ the summary to asafl@rh.co.il via Gmail.
   - Chrome path: /usr/bin/google-chrome
   - Profile dir: ~/.local/share/recorder-cli/chrome-profile
 
+## Discovered API Methods (not yet implemented)
+- [ ] Server-side Search + SingleRecordingSearch (replace client-side filtering)
+- [ ] UpdateRecordingLabels (favorite/unfavorite)
+- [ ] DeleteRecordingList (uses device internalId, not shareId)
+- [ ] ChangeShareState (private/public link)
+- [ ] EditingService: OpenSession, CropAudio, RemoveAudio, SaveAudio, CloseSession, UndoEdit
+- [ ] EditingService (source-only): SplitTranscription, RenameSpeaker, SwitchSpeaker
+
 ## Remaining CLI Issues (lower priority)
 - [ ] Add transcript export formats: SRT, VTT (Issue #3)
 - [ ] Parse getAudioTags and getWaveform responses (Issue #4)
