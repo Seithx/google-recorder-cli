@@ -10,9 +10,11 @@ the summary to asafl@rh.co.il via Gmail.
 ```
 [VPS with Chrome + Node.js]
         |
-  [Cron / scheduler] -- every 5-15 min
+  [Persistent headless Chrome] -- browser-as-runtime (not raw HTTP)
         |
-  [Poll Recorder API] -- any new recordings since last check?
+  [Polling loop] -- every 5 min
+        |
+  [Poll Recorder API via page.evaluate(fetch)] -- new recordings?
         | yes
   [Download audio (m4a)]
         |
@@ -23,12 +25,21 @@ the summary to asafl@rh.co.il via Gmail.
   [Send summary via Gmail to asafl@rh.co.il]
 ```
 
+## Why Browser-as-Runtime (not raw HTTP)
+- **Google rejects raw HTTP clients after ~2 hours** even with valid cookies
+  - Learned from NotebookLM project: extracted cookies work in browser but fail via httpx/requests
+  - TLS fingerprint (JA3) differs between Chromium and raw HTTP clients
+- Solution: keep headless Chrome alive, execute `fetch()` inside browser JS context
+  - Google sees real browser with authentic TLS, cookies, and JS execution
+  - Session survives 9+ hours (tested on NotebookLM)
+- Phase 1 CLI (raw `https.request()`) works fine for one-off commands
+- Phase 2 automation MUST use browser-as-runtime for long-running polling
+
 ## Why VPS (not Vercel / Cloud Functions)
-- Need persistent Chrome for cookie refresh (SAPISIDHASH auth)
+- Need persistent headless Chrome (browser-as-runtime for auth)
 - Vercel = serverless, no browser, no persistent filesystem
 - Google Cloud Functions = same limitations
 - VPS options: DigitalOcean, Hetzner, Linode (~$5/mo)
-- Chrome runs headless on VPS for auto cookie refresh
 
 ## Phase 1 - Done (CLI)
 - [x] Build proper CLI with commander.js (Issue #1)
@@ -58,19 +69,36 @@ the summary to asafl@rh.co.il via Gmail.
 - [ ] Gmail integration
   - Send summary email to asafl@rh.co.il
   - Needs: OAuth2 credentials (or SMTP with app password)
-- [ ] Polling / scheduler
-  - Track last-checked timestamp
-  - Detect new recordings since last poll
+- [ ] Browser-as-runtime layer -- **MUST be built before polling works**
+  - Keep persistent headless Chrome alive, run `fetch()` via `page.evaluate()`
+  - Google rejects raw HTTP after ~2hrs (TLS/JA3 fingerprint mismatch)
+  - Stealth stack: `channel="chrome"`, playwright-stealth, disable automation flags
+  - Persistent browser profile preserves Google session across restarts
+  - Cache cleanup on startup (ShaderCache, GPUCache, *.CHROME_DELETE)
+  - Serialize page access (one request at a time, or page pool for parallelism)
+  - First-time: visible browser for manual login; subsequent: headless from profile
+- [ ] Error recovery + watchdog
+  - Force page reload on RPC error (re-extract tokens, retry transparently)
+  - Full browser restart on crash (persistent profile = no re-login)
+  - Heartbeat every 10 min with exponential backoff on repeated failure
+  - Pushover/email alert on unrecoverable auth failure
+- [ ] Polling / scheduler (depends on browser-as-runtime ^)
+  - Track last-checked timestamp (file or DB)
+  - `listRecordings()` -> compare `createdSec` > `lastChecked` -> download new
   - Auto-retry on transient failures
-- [ ] Auto cookie refresh (Issue #7)
-  - Headless Chrome on VPS for automatic re-auth
-  - Alert email if re-auth fails
+  - Detect AUTH_EXPIRED -> trigger page reload -> retry
 
-## Phase 3 - VPS Deployment
-- [ ] Choose VPS provider
-- [ ] Set up Node.js + headless Chrome
-- [ ] Deploy automation as systemd service or pm2 process
-- [ ] Set up cron schedule
+## Phase 3 - Deployment
+- [ ] Choose deployment target (VPS Linux or Windows Docker)
+- [ ] Dockerize: Node.js + headless Chrome + persistent browser profile volume
+- [ ] Two-layer health monitoring (from watchdog architecture):
+  - Host watchdog (systemd on Linux / NSSM on Windows): Docker daemon + container liveness
+  - In-container monitor: app-level health (session alive, API responding)
+  - Escalating recovery: page reload -> browser restart -> container restart -> alert
+- [ ] Alert strategy: Pushover for host-level (works when container is dead), email for app-level
+- [ ] Alert throttling: prevent storm during crash loops (10min cooldown)
+- [ ] Crash forensics: capture exit code, OOM flag, last logs BEFORE restart
+- [ ] Startup recovery: priority-order catch-up (fast local tasks first, slow API calls last)
 - [ ] Cross-platform support for Linux (Issue #2)
   - Chrome path: /usr/bin/google-chrome
   - Profile dir: ~/.local/share/recorder-cli/chrome-profile
