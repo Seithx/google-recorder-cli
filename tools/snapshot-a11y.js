@@ -13,7 +13,8 @@ const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const path = require('path');
 
-const OUTPUT_DIR = 'C:/tmp';
+const os = require('os');
+const OUTPUT_DIR = os.tmpdir();
 const DEFAULT_OUTPUT = path.join(OUTPUT_DIR, 'a11y_recorder.txt');
 
 // ---- PII sanitization patterns ----
