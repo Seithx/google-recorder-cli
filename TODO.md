@@ -32,3 +32,6 @@
 - [ ] Parse getAudioTags and getWaveform responses (Issue #4)
 - [ ] `RECORDER_DEBUG_RPC=1` debug mode
 - [ ] API health check (nightly CI with auto-issue on breakage)
+- [ ] Auto-discover Chrome via DevToolsActivePort files (instead of hardcoded port 9222)
+- [ ] Cross-platform cookie extraction: SQLite fallback + Linux keychain decryption (Issue #2)
+- [ ] Expose Recorder API as MCP server (any AI agent can call recordings/transcripts)
