@@ -278,7 +278,7 @@ Inspired by [google-recorder-cli](https://github.com/dylantmoore/google-recorder
 
 ## Author
 
-Built by [Asaf Lecht](https://github.com/Seithx)
+Built by [Asaf Lecht / אסף לכט](https://github.com/Seithx)
 
 ## License
 
